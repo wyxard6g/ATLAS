@@ -1,12 +1,10 @@
 from atlas.core.logger import logger
-from atlas.core.settings import settings
+from atlas.core.exceptions import RiskLimitExceededError
 
-logger.info("ATLAS has started successfully.")
+logger.info("ATLAS starting...")
 
-logger.info(f"Application: {settings.app_name}")
+try:
+    raise RiskLimitExceededError("Risk exceeds maximum allowed.")
 
-logger.info(f"Version: {settings.version}")
-
-logger.info(f"Broker: {settings.broker}")
-
-logger.info(f"Paper Trading: {settings.paper_trading}")
+except RiskLimitExceededError as error:
+    logger.error(error)
