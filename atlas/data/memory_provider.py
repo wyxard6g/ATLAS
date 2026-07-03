@@ -26,19 +26,6 @@ class MemoryDataProvider(DataProvider):
         self._timeframe = timeframe
         self._source = source
 
-    def get_historical_candles(
-        self,
-        symbol: str,
-        start: datetime,
-        end: datetime,
-        timeframe: str,
-    ) -> list[Candle]:
-        return [
-            candle
-            for candle in self._candles
-            if start <= candle.timestamp <= end
-        ]
-
     def get_market_data(
         self,
         start: datetime,

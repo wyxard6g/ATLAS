@@ -5,7 +5,7 @@ from atlas.data.memory_provider import MemoryDataProvider
 from atlas.domain.candle import Candle
 
 
-def test_memory_provider_returns_candles():
+def test_memory_provider_returns_market_data():
     now = datetime.now()
 
     candles = [
@@ -19,14 +19,14 @@ def test_memory_provider_returns_candles():
         timeframe="1m",
     )
 
-    result = provider.get_historical_candles(
-        symbol="EURUSD",
+    market_data = provider.get_market_data(
         start=now,
         end=now + timedelta(minutes=1),
-        timeframe="1m",
     )
 
-    assert len(result) == 2
+    assert market_data.count == 2
+    assert market_data.symbol == "EURUSD"
+    assert market_data.timeframe == "1m"
 
 
 def test_memory_provider_rejects_empty_candles():
