@@ -13,7 +13,11 @@ def test_memory_provider_returns_candles():
         Candle(now + timedelta(minutes=1), 102, 106, 101, 104, 1200),
     ]
 
-    provider = MemoryDataProvider(candles)
+    provider = MemoryDataProvider(
+        candles=candles,
+        symbol="EURUSD",
+        timeframe="1m",
+    )
 
     result = provider.get_historical_candles(
         symbol="EURUSD",
@@ -27,7 +31,11 @@ def test_memory_provider_returns_candles():
 
 def test_memory_provider_rejects_empty_candles():
     with pytest.raises(ValueError):
-        MemoryDataProvider([])
+        MemoryDataProvider(
+            candles=[],
+            symbol="EURUSD",
+            timeframe="1m",
+        )
 
 
 def test_memory_provider_latest_tick():
@@ -37,7 +45,11 @@ def test_memory_provider_latest_tick():
         Candle(now, 100, 105, 95, 102, 1000),
     ]
 
-    provider = MemoryDataProvider(candles)
+    provider = MemoryDataProvider(
+        candles=candles,
+        symbol="EURUSD",
+        timeframe="1m",
+    )
 
     tick = provider.get_latest_tick("EURUSD")
 
