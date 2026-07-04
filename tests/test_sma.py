@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from atlas.domain.candle import Candle
 from atlas.domain.market_data import MarketData
+from atlas.features.context import FeatureContext
 from atlas.features.trend.sma import SimpleMovingAverage
 
 
@@ -22,9 +23,10 @@ def test_sma_computation():
         candles=candles,
     )
 
+    context = FeatureContext.from_market_data(market_data)
     sma = SimpleMovingAverage(period=3)
 
-    assert sma.compute(market_data) == 102
+    assert sma.compute(context) == 102
 
 
 def test_sma_rejects_invalid_period():
@@ -46,7 +48,8 @@ def test_sma_requires_enough_candles():
         candles=candles,
     )
 
+    context = FeatureContext.from_market_data(market_data)
     sma = SimpleMovingAverage(period=3)
 
     with pytest.raises(ValueError):
-        sma.compute(market_data)
+        sma.compute(context)

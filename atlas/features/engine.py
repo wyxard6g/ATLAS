@@ -1,5 +1,6 @@
 from atlas.domain.feature_set import FeatureSet
 from atlas.domain.market_data import MarketData
+from atlas.features.context import FeatureContext
 from atlas.features.registry import FeatureRegistry
 
 
@@ -12,10 +13,12 @@ class FeatureEngine:
         self._registry = registry
 
     def compute(self, market_data: MarketData) -> FeatureSet:
+        context = FeatureContext.from_market_data(market_data)
+
         results = {}
 
         for feature in self._registry.all():
-            results[feature.name] = feature.compute(market_data)
+            results[feature.name] = feature.compute(context)
 
         return FeatureSet(
             symbol=market_data.symbol,

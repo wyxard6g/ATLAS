@@ -1,5 +1,5 @@
-from atlas.domain.market_data import MarketData
 from atlas.features.base import Feature
+from atlas.features.context import FeatureContext
 
 
 class SimpleMovingAverage(Feature):
@@ -17,10 +17,8 @@ class SimpleMovingAverage(Feature):
     def name(self) -> str:
         return f"sma_{self.period}"
 
-    def compute(self, market_data: MarketData) -> float:
-        if market_data.count < self.period:
+    def compute(self, context: FeatureContext) -> float:
+        if context.count < self.period:
             raise ValueError("Not enough candles to compute SMA.")
 
-        closes = [candle.close for candle in market_data.candles]
-
-        return sum(closes[-self.period:]) / self.period
+        return sum(context.closes[-self.period:]) / self.period

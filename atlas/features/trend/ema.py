@@ -1,5 +1,5 @@
-from atlas.domain.market_data import MarketData
 from atlas.features.base import Feature
+from atlas.features.context import FeatureContext
 
 
 class ExponentialMovingAverage(Feature):
@@ -17,12 +17,11 @@ class ExponentialMovingAverage(Feature):
     def name(self) -> str:
         return f"ema_{self.period}"
 
-    def compute(self, market_data: MarketData) -> float:
-        if market_data.count < self.period:
+    def compute(self, context: FeatureContext) -> float:
+        if context.count < self.period:
             raise ValueError("Not enough candles to compute EMA.")
 
-        closes = [candle.close for candle in market_data.candles]
-
+        closes = context.closes
         multiplier = 2 / (self.period + 1)
 
         ema = closes[0]

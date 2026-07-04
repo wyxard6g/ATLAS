@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 
 from atlas.domain.candle import Candle
 from atlas.domain.market_data import MarketData
+from atlas.features.context import FeatureContext
 from atlas.features.trend.ema import ExponentialMovingAverage
 
 
@@ -22,9 +23,10 @@ def test_ema_computation():
         candles=candles,
     )
 
+    context = FeatureContext.from_market_data(market_data)
     ema = ExponentialMovingAverage(period=3)
 
-    assert round(ema.compute(market_data), 2) == 102.50
+    assert round(ema.compute(context), 2) == 102.50
 
 
 def test_ema_rejects_invalid_period():
@@ -46,7 +48,8 @@ def test_ema_requires_enough_candles():
         candles=candles,
     )
 
+    context = FeatureContext.from_market_data(market_data)
     ema = ExponentialMovingAverage(period=3)
 
     with pytest.raises(ValueError):
-        ema.compute(market_data)
+        ema.compute(context)
