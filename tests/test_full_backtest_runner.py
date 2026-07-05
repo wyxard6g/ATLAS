@@ -9,6 +9,7 @@ from atlas.backtesting.lifecycle_manager import TradeLifecycleManager
 from atlas.backtesting.pipeline import BacktestFeaturePipeline
 from atlas.backtesting.portfolio_manager import PortfolioManager
 from atlas.backtesting.position_manager import PositionManager
+from atlas.backtesting.position_monitor import PositionMonitor
 from atlas.backtesting.trade_log import TradeLog
 from atlas.backtesting.trading_pipeline import BacktestTradingPipeline
 from atlas.domain.candle import Candle
@@ -23,6 +24,9 @@ from atlas.risk.registry import RiskRegistry
 from atlas.strategies.engine import StrategyEngine
 from atlas.strategies.registry import StrategyRegistry
 from atlas.strategies.trend.ema_rsi_strategy import EmaRsiTrendStrategy
+from atlas.exit_strategies.engine import ExitStrategyEngine
+from atlas.exit_strategies.fixed_percent import FixedPercentExitStrategy
+from atlas.exit_strategies.registry import ExitStrategyRegistry
 
 
 def test_full_backtest_runner_processes_candles():
@@ -107,15 +111,32 @@ def test_full_backtest_runner_processes_candles():
         stop_loss_percent=0.05,
     )
 
+    exit_registry = ExitStrategyRegistry()
+    exit_registry.register(
+        FixedPercentExitStrategy(
+            take_profit_percent=0.10,
+            stop_loss_percent=0.05,
+        )
+    )
+
+    exit_strategy_engine = ExitStrategyEngine(exit_registry)
+
+    monitor = PositionMonitor(
+        position_manager=positions,
+        exit_strategy_engine=exit_strategy_engine,
+        exit_engine=exit_engine,
+        exit_strategy_name="fixed_percent",
+    )
+
     runner = FullBacktestRunner(
         candles=candles,
         candle_processor=processor,
         portfolio_manager=portfolio,
+        position_monitor=monitor,
         start_index=50,
     )
 
     results = runner.run()
 
     assert len(results) == 10
-    assert trades.count == 1
-    assert positions.count == 1
+    assert trades.count >= 1

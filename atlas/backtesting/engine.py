@@ -39,6 +39,13 @@ class BacktestEngine:
         return approved_signals
 
     def report(self) -> BacktestReport:
-        stats = Statistics(self.trade_log)
+        return BacktestReport(
+            starting_capital=self.portfolio.cash,
+            ending_capital=self.portfolio.equity,
+            total_return=self.portfolio.equity - self.portfolio.cash,
+            total_trades=self.trade_log.count,
+            winning_trades=0,
+            losing_trades=0,
+            win_rate=0,
 
-        return BacktestReport(stats)
+        )

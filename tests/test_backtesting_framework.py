@@ -45,6 +45,7 @@ def test_statistics_total_trades():
 def test_backtest_engine_report():
     engine = BacktestEngine(starting_cash=100_000)
 
-    report = engine.report().summary()
+    report = engine.report()
 
-    assert report["total_trades"] == 0
+    assert report.total_trades == 0
+    assert report.starting_capital == 100_000
