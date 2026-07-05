@@ -31,7 +31,6 @@ class BacktestEngine:
         approved_signals = []
 
         for i in range(start_index, end_index + 1):
-
             signal, approved = pipeline.evaluate(i)
 
             if approved:
